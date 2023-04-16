@@ -23,9 +23,6 @@ public class Main {
         File game1D = new File("E:\\Games\\saveGames\\game1.dat");
         File game2D = new File("E:\\Games\\saveGames\\game2.dat");
         File game3D = new File("E:\\Games\\saveGames\\game3.dat");
-
-        openZip("E:\\Games\\saveGames\\saveZips.zip");
-        System.out.println(openProgress("E:\\Games\\saveGames\\game1.dat"));
         if (game1D.delete()) {
             System.out.println(game1D.getName() + "DELETE");
         }
@@ -36,11 +33,14 @@ public class Main {
             System.out.println(game3D.getName() + "DELETE");
         }
 
+        openZip("E:\\Games\\saveGames\\saveZips.zip");
+        System.out.println(openProgress(game2D.getPath()));
+
+
     }
 
     public static void saveGames(String url, GameProgress gp) {
-        try (FileOutputStream fos = new FileOutputStream(url);
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+        try (FileOutputStream fos = new FileOutputStream(url); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             oos.writeObject(gp);
 
         } catch (Exception ex) {
@@ -55,7 +55,8 @@ public class Main {
             for (String file : arraysList) {
                 try {
                     FileInputStream fous = new FileInputStream(file);
-                    ZipEntry zip = new ZipEntry(file);
+                    ZipEntry zip = new ZipEntry(new File(file).getName());
+
                     zout.putNextEntry(zip);
                     byte[] buffer = new byte[fous.available()];
                     fous.read(buffer);
@@ -64,6 +65,7 @@ public class Main {
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                 }
+
             }
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
@@ -92,8 +94,7 @@ public class Main {
 
     public static GameProgress openProgress(String path) {
         GameProgress gameProgress = null;
-        try (FileInputStream fint = new FileInputStream(path);
-             ObjectInputStream ois = new ObjectInputStream(fint)) {
+        try (FileInputStream fint = new FileInputStream(path); ObjectInputStream ois = new ObjectInputStream(fint)) {
             gameProgress = (GameProgress) ois.readObject();
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
